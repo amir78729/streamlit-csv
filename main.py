@@ -8,7 +8,37 @@ SEP = ';'  # The character that separates values in the CSV file (semicolon)
 ENCODING = 'utf-8'  # Encoding used to read/write files
 
 # List of public holidays – add dates here in "YYYYMMDD" format, like "20231225" for Dec 25, 2023
-PUBLIC_HOLIDAYS = []
+PUBLIC_HOLIDAYS = [
+    # 2025
+    "20250101",
+    "20250106",
+    "20250418",
+    "20250420",
+    "20250421",
+    "20250501",
+    "20250529",
+    "20250606",
+    "20250608",
+    "20250621",
+    "20251101",
+    "20251225",
+    "20251226",
+
+    # 2026
+    "20260101",
+    "20260106",
+    "20260403",
+    "20260405",
+    "20260406",
+    "20260501",
+    "20260514",
+    "20260524",
+    "20260606",
+    "20260620",
+    "20261031",
+    "20261225",
+    "20261226",
+]
 
 # This function checks if a date is a weekend or a public holiday
 def is_holiday(date_str):
