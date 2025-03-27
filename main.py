@@ -111,14 +111,14 @@ if uploaded_file is not None:
             'sjuk från dag 46',
         ])]
         
-        st.write('Replace , to . in floating numbers...')
         for c in [col['Arbhel'], col["Omf"], col['Specantal'], col['Antal']]:
-            df[c] = df[c].str.replace(',', '.').astype(str)
-        st.write(df)
+            st.write('Replace `,` to `.` in floating numbers for `{}`...'.format(c))
+            df[c] = df[c].replace(',', '.', regex=True)
+            st.write(df)
         
         for c in [col['Arbhel'], col["Omf"], col['Specantal'], col['Antal']]:
             st.write('Round `{}` values...'.format(c))
-            df[c] = df[c].str.replace(',', '.').round(2)
+            df[c] = df[c].astype(float).round(2)
         st.write(df)
 
     with st.status("Filtering File"):
@@ -131,7 +131,7 @@ if uploaded_file is not None:
         st.write(df_filtered)
 
         st.write('Filtering `{}`...'.format(col['Arbhel']))
-        df_filtered = df_filtered[df_filtered[col['Arbhel']].str.startswith(('35', '40'))]
+        df_filtered = df_filtered[df_filtered[col['Arbhel']].astype(str).str.startswith(('35', '40'))]
         st.write(df_filtered)
 
         st.write('Filtering `{}`...'.format(col['Gfom']))
