@@ -91,11 +91,17 @@ if uploaded_file is not None:
         st.write("Remove quetes...")
         df = df.replace('"', '')
         
-        st.write("Removing `{}` column...".format(col['Orsak']))
-        df = df.drop(col['Orsak'], axis=1)
+        try:
+            st.write("Removing `{}` column...".format(col['Orsak']))
+            df = df.drop(col['Orsak'], axis=1)
+        except:
+            pass
 
-        st.write("Renaming `{}` column to `{}`...".format(col['Orsak'], col['Frånvaro']))
-        df = df.rename(columns={col['Orstxt']: col['Frånvaro']})
+        try:
+            st.write("Renaming `{}` column to `{}`...".format(col['Orsak'], col['Frånvaro']))
+            df = df.rename(columns={col['Orstxt']: col['Frånvaro']})
+        except:
+            pass
 
         st.write("Removing redundant values in `{}` column...".format(col['Frånvaro']))
         df = df[~df[col['Frånvaro']].str.lower().isin([
