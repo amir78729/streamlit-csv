@@ -1,86 +1,107 @@
 # 📊 CSV Filter Tool
 
-This is a simple web app that helps you filter and clean your CSV files. You can use it without knowing how to code!
+A simple and powerful tool to **clean and filter your CSV files** — no coding skills needed!
 
-Built with [Streamlit](https://streamlit.io/) and [Pandas](https://pandas.pydata.org/).
+Built with [Streamlit](https://streamlit.io/) and [Pandas](https://pandas.pydata.org/). Runs entirely on your computer — **your data never leaves your machine**.
 
 
-## 🚀 What does it do?
+## 🚀 Features
 
-After uploading a CSV file, the app will:
+After uploading a CSV file, the app will automatically:
 
 1. **Remove double quotes** from the data.
-2. **Filter out rows** based on values in specific columns:
-   - Removes rows where **`Förv/Bolag`** is `KulturN`.
-   - Removes rows where **`Semgrp`** is `1`, `8`, `9`, or `22`.
-   - Removes rows where **`Arbhel`** is `35` or `40`.
+2. **Rename and clean up** columns.
+3. **Filter rows** based on specific conditions:
+   - Excludes rows where **`Förv/Bolag`** is `KulturN`.
+   - Excludes rows where **`Semgrp`** is `1`, `8`, `9`, or `22`.
+   - Keeps only rows where **`Arbhel`** starts with `35` or `40`.
    - Removes rows where **`Gfom`** is a **weekend** or **public holiday**.
-3. Show the **filtered results**.
-4. Let you **download the cleaned file**.
+4. Automatically handles decimal formatting and rounding.
+5. Provides options to **download the filtered data** as CSV or Excel.
 
 
-## 🛠 How to run it
 
-### 1. Install Python (if you haven’t already)
+## 🧑‍💻 How to Use (No Coding Required!)
 
-Download and install Python from: https://www.python.org/downloads/
+### ✅ Option 1: Just Run the App (Windows Users)
 
-Make sure to check the box **"Add Python to PATH"** during installation.
+1. Download the project folder.
+2. Double-click the **`launch.exe`** file.
+3. Your browser will open with the app running locally.
+4. Upload your CSV file and let the app do the rest.
+5. Download the cleaned file when you're done!
+
+> [!TIP]
+> If it's your first time running it, the app will automatically install any missing Python packages.
 
 
-### 2. Download the code
 
-You can download or clone this project to your computer.
+### ⚙️ Option 2: Run from Source (For Developers / Advanced Users)
 
+#### 1. Install Python
 
-### 3. Install the required libraries
+Download Python from: https://www.python.org/downloads/
 
-Open your terminal or command prompt, go to the project folder, and run:
+> Make sure to check **"Add Python to PATH"** during installation.
+
+#### 2. Download the code
+
+Clone or download this repo to your computer.
+
+#### 3. Install required packages
 
 ```bash
 pip install -r requirements.txt
 ```
 
-
-### 4. Start the app
-
-Run this command in your terminal inside the project folder:
+#### 4. Run the app
 
 ```bash
-streamlit run csv-filter.py
+streamlit run main.py
 ```
 
-The app will open in your browser! 🎉
 
 
-## 📁 Your CSV File
+## 📁 CSV File Format
 
-- Make sure your CSV uses `;` (semicolon) as a separator.
-- It should have the following columns:
+Your input CSV file should:
+
+- Use `;` (semicolon) as a separator.
+- Contain the following columns:
   - `Förv/Bolag`
   - `Semgrp`
   - `Arbhel`
-  - `Gfom` (date column in `YYYYMMDD` format)
+  - `Gfom` (must be in `YYYYMMDD` format)
+
 
 
 ## 🎄 Public Holidays
 
-To make it work with public holidays, add them to the `PUBLIC_HOLIDAYS` list in the script like this:
+The app already includes common Swedish public holidays for 2025 and 2026.
+
+To add more dates, open `main.py` and edit the `PUBLIC_HOLIDAYS` list:
 
 ```python
-PUBLIC_HOLIDAYS = ["20231225", "20240101"]
+PUBLIC_HOLIDAYS = ["20250101", "20251225", ...]
 ```
+
 
 
 ## 💾 Output
 
-After filtering, you’ll be able to download a new, cleaned CSV file.
+After filtering, you can download the result as:
+
+- ✅ CSV file
+- ✅ Excel file (.xlsx)
+
+The cleaned file will retain the original filename with `-result` added.
+
 
 
 ## 🙋 Need Help?
 
-If something doesn’t work, double-check:
-- Your file format
-- Column names
-- Date format in the `Gfom` column
+If something doesn’t work:
 
+- Check your CSV file format and column names.
+- Ensure `Gfom` dates are in the correct format (`YYYYMMDD`).
+- Try running the app again — it will guide you with clear messages.
