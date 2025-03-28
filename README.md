@@ -1,107 +1,114 @@
 # 📊 CSV Filter Tool
 
-A simple and powerful tool to **clean and filter your CSV files** — no coding skills needed!
+This is a simple web app that helps you filter and clean your CSV files — now with Excel output support! You can use it without writing any code.
 
-Built with [Streamlit](https://streamlit.io/) and [Pandas](https://pandas.pydata.org/). Runs entirely on your computer — **your data never leaves your machine**.
+Built with [Streamlit](https://streamlit.io/) and [Pandas](https://pandas.pydata.org/).
 
 
-## 🚀 Features
+## 🚀 What does it do?
 
-After uploading a CSV file, the app will automatically:
+After uploading a CSV file, the app will:
 
 1. **Remove double quotes** from the data.
-2. **Rename and clean up** columns.
-3. **Filter rows** based on specific conditions:
-   - Excludes rows where **`Förv/Bolag`** is `KulturN`.
-   - Excludes rows where **`Semgrp`** is `1`, `8`, `9`, or `22`.
-   - Keeps only rows where **`Arbhel`** starts with `35` or `40`.
-   - Removes rows where **`Gfom`** is a **weekend** or **public holiday**.
-4. Automatically handles decimal formatting and rounding.
-5. Provides options to **download the filtered data** as CSV or Excel.
+2. **Drop** the `Orsak` column (if present).
+3. **Rename** the `Orstxt` column to `Frånvaro`.
+4. **Filter out rows** where:
+   - `Förv/Bolag` is `KulturN`
+   - `Semgrp` is `1`, `8`, `9`, or `22`
+   - `Arbhel` does **not** start with `35` or `40`
+   - `Gfom` falls on a **weekend** or **public holiday**
+   - `Frånvaro` contains specific unwanted values
+5. **Convert commas to dots** in numeric columns: `Arbhel`, `Omf`, `Specantal`, `Antal`
+6. **Round** numeric values to two decimal places
+7. Show both the **raw** and **filtered** results
+8. Let you **download** the cleaned data as either **CSV** or **Excel**
+
+> 💡 All processing happens locally on your device. Your data is never uploaded or shared.
 
 
+## 🛠 How to run it
 
-## 🧑‍💻 How to Use (No Coding Required!)
-
-### ✅ Option 1: Just Run the App (Windows Users)
-
-1. Download the project folder.
-2. Double-click the **`launch.exe`** file.
-3. Your browser will open with the app running locally.
-4. Upload your CSV file and let the app do the rest.
-5. Download the cleaned file when you're done!
-
-> [!TIP]
-> If it's your first time running it, the app will automatically install any missing Python packages.
-
-
-
-### ⚙️ Option 2: Run from Source (For Developers / Advanced Users)
+### Option 1: Manual setup
 
 #### 1. Install Python
 
-Download Python from: https://www.python.org/downloads/
+Download and install Python from: https://www.python.org/downloads/
 
-> Make sure to check **"Add Python to PATH"** during installation.
+Make sure to check the box **"Add Python to PATH"** during installation.
 
-#### 2. Download the code
+#### 2. Download the project
 
-Clone or download this repo to your computer.
+You can download or clone this project to your computer.
 
-#### 3. Install required packages
+#### 3. Install the required libraries
+
+Open your terminal or command prompt, go to the project folder, and run:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-#### 4. Run the app
+Alternatively, for Python 3 explicitly:
 
 ```bash
-streamlit run main.py
+pip3 install -r requirements.txt
 ```
 
+#### 4. Start the app
+
+```bash
+streamlit run csv-filter.py
+```
+
+The app will launch in your browser! 🎉
 
 
-## 📁 CSV File Format
+### Option 2: Use Windows `.bat` files
 
-Your input CSV file should:
+For Windows users, you can use these helper scripts:
 
-- Use `;` (semicolon) as a separator.
-- Contain the following columns:
+- `run-app.bat` — Starts the app automatically
+- `run-installation.bat` — Installs required libraries using `pip`
+- `run-installation-v3.bat` — Installs required libraries using `pip3`
+
+
+## 📁 Your CSV File
+
+- The CSV must use `;` (semicolon) as a separator.
+- It should include the following columns:
   - `Förv/Bolag`
   - `Semgrp`
   - `Arbhel`
-  - `Gfom` (must be in `YYYYMMDD` format)
-
+  - `Gfom` (date in `YYYYMMDD` format)
+  - `Orsak`, `Orstxt`, `Frånvaro`, `Omf`, `Specantal`, `Antal` (optional, but recommended)
 
 
 ## 🎄 Public Holidays
 
-The app already includes common Swedish public holidays for 2025 and 2026.
-
-To add more dates, open `main.py` and edit the `PUBLIC_HOLIDAYS` list:
+To recognize public holidays, you can edit the `PUBLIC_HOLIDAYS` list in the script:
 
 ```python
-PUBLIC_HOLIDAYS = ["20250101", "20251225", ...]
+PUBLIC_HOLIDAYS = [
+    "20250101", "20250418", "20251225", ...
+]
 ```
 
+Dates must be in `YYYYMMDD` format.
 
 
 ## 💾 Output
 
-After filtering, you can download the result as:
+After filtering, you’ll be able to download the cleaned data as:
 
-- ✅ CSV file
-- ✅ Excel file (.xlsx)
-
-The cleaned file will retain the original filename with `-result` added.
-
+- A `CSV` file
+- An `Excel` file (`.xlsx`) with a sheet named `FilteredData`
 
 
 ## 🙋 Need Help?
 
-If something doesn’t work:
+If something doesn’t work, double-check:
 
-- Check your CSV file format and column names.
-- Ensure `Gfom` dates are in the correct format (`YYYYMMDD`).
-- Try running the app again — it will guide you with clear messages.
+- Your file uses `;` as a separator
+- The required columns exist and are spelled correctly
+- The `Gfom` column uses the `YYYYMMDD` format
+```
