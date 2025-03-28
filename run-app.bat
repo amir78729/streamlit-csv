@@ -1,3 +1,3 @@
 ECHO ON
-python -m streamlit run test.py
+python -m streamlit run main.py
 PAUSE
