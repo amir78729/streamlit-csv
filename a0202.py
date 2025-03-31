@@ -9,7 +9,7 @@ import os
 SEP = ';'
 ENCODING = 'latin1'
 
-st.title("A02 02 Sjuk o frånvaro med omf")
+st.title("A02_02: Sjuk o frånvaro med omf")
 st.write("Implementing...")
 
 # uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
