@@ -7,7 +7,7 @@ from utils.date import is_holiday
 SEP = ';'
 ENCODING = 'utf-8'
 
-st.title("A05_07: List Noll Bearb")
+st.title("A05_07: List Noll Bearb, A05_08: List Noll Verkställ")
 
 uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
 
