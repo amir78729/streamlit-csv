@@ -65,6 +65,7 @@ def extract_matching_rows(df, headers, condition_fn):
 
 # Streamlit UI
 st.title("S2_10: Sjuk mer än 365 dagar")
+keep_all_data = st.checkbox("Keep original data as a worksheet", value=False)
 uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
 st.info("Don't worry! all the calculations are running in your machine and the data is not being shared anywhere.")
 
@@ -77,22 +78,33 @@ if uploaded_file is not None:
         st.write(df)
 
     wb = Workbook()
-    ws_all = wb.active
-    ws_all.title = "all data"
-    sheets = {name: wb.create_sheet(title=name) for name in SHEET_NAMES}
 
-    with st.status("Update cell styles"):
+    if keep_all_data:
+        ws_all = wb.active
+        ws_all.title = "All data"
+    else:
+        wb.remove(wb.active)
+        ws_all = None  # So we can skip writing to it later
+    
+    sheets = {name: wb.create_sheet(title=name) for name in SHEET_NAMES}
+    
+    # set the active sheet    
+    wb.active = wb[sheets["Sjuk"].title]
+
+
+    with st.status("Update cell values"):
         headers = df.columns.tolist()
 
         # Write all data + styles
-        for r_idx, row in enumerate(dataframe_to_rows(df, index=False, header=True), 1):
-            for c_idx, value in enumerate(row, 1):
-                col_name = headers[c_idx - 1]
-                cell = ws_all.cell(row=r_idx, column=c_idx, value=value)
-                if r_idx == 1:
-                    cell.font = header_font
-                else:
-                    apply_cell_style(cell, col_name, value)
+        if keep_all_data:
+            for r_idx, row in enumerate(dataframe_to_rows(df, index=False, header=True), 1):
+                for c_idx, value in enumerate(row, 1):
+                    col_name = headers[c_idx - 1]
+                    cell = ws_all.cell(row=r_idx, column=c_idx, value=value)
+                    if r_idx == 1:
+                        cell.font = header_font
+                    else:
+                        apply_cell_style(cell, col_name, value)
 
         # Apply headers to all sheets
         for sheet in sheets.values():
@@ -123,14 +135,17 @@ if uploaded_file is not None:
             copy_rows_to_sheet(sheets[name], headers, low_income_rows, start_row=existing_rows + 1)
 
     # Auto-filters
-    ws_all.auto_filter.ref = ws_all.dimensions
+    if ws_all:
+        ws_all.auto_filter.ref = ws_all.dimensions
+    
     for sheet in sheets.values():
         sheet.auto_filter.ref = sheet.dimensions
 
-    # Save and export
-    output = io.BytesIO()
-    wb.save(output)
-    output.seek(0)
+    with st.status("Creating the excel file"):
+        # Save and export
+        output = io.BytesIO()
+        wb.save(output)
+        output.seek(0)
 
     st.download_button(
         label="Download Result Excel",
