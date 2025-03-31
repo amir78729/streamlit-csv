@@ -23,11 +23,12 @@ if uploaded_file is not None:
     with st.status("Reading CSV File"):
         df = pd.read_csv(uploaded_file, sep=SEP, encoding=ENCODING)
         st.write(df)
-        
+
     wb = Workbook()
-    ws = wb.active
-    ws.title = "all data"
-    
+    ws_all = wb.active
+    ws_all.title = "all data"
+
+    # Create additional sheets
     sheet_names = [
         "Sjuk",
         "Sjuk >år",
@@ -36,9 +37,8 @@ if uploaded_file is not None:
         "Sjukers",
         "Arbetsskadelivränta"
     ]
-    
     sheets = {name: wb.create_sheet(title=name) for name in sheet_names}
-        
+
     with st.status("Update cell styles"):
         header_font = Font(bold=True)
         bold_font = Font(bold=True)
@@ -52,16 +52,20 @@ if uploaded_file is not None:
         purple_font = Font(color="800080", bold=True)
         orange_fill = PatternFill(start_color="FFA500", end_color="FFA500", fill_type="solid")
 
+        # Track matching rows
+        matched_rows = []
+
+        # Write data to "all data" and capture matching rows
         for r_idx, row in enumerate(dataframe_to_rows(df, index=False, header=True), 1):
             for c_idx, value in enumerate(row, 1):
-                cell = ws.cell(row=r_idx, column=c_idx, value=value)
+                cell = ws_all.cell(row=r_idx, column=c_idx, value=value)
                 cell.border = border_style
 
                 if r_idx == 1:
                     cell.font = header_font
-                    headers = row 
+                    headers = row  # Save headers for reuse
                 else:
-                    col_letter = ws.cell(row=1, column=c_idx).value
+                    col_letter = ws_all.cell(row=1, column=c_idx).value
 
                     if col_letter == "Omf":
                         cell.value = round(float(value.replace(',', '.')), 3)
@@ -77,9 +81,105 @@ if uploaded_file is not None:
                         if str(value) in ['8', '9']:
                             cell.fill = orange_fill
 
-        st.write(df)
+            # Check matching condition
+            if r_idx > 1:
+                row_dict = dict(zip(headers, row))
+                try:
+                    lon_val = int(row_dict.get("Verklig lön", "0").split(',')[0])
+                    frn_ors = str(row_dict.get("Frn Ors", "")).strip()
+                    if lon_val >= 49000 and frn_ors in ["FörlSj>2", "Sjuk", "Sj>2år", "Sjukförl"]:
+                        matched_rows.append(row)
+                except Exception as e:
+                    pass
 
-    ws.auto_filter.ref = ws.dimensions
+        extra_matched_rows = []
+        for row in dataframe_to_rows(df, index=False, header=True):
+            row_dict = dict(zip(headers, row))
+            try:
+                lon_val = int(row_dict.get("Verklig lön", "0").split(',')[0])
+                frn_ors = str(row_dict.get("Frn Ors", "")).strip()
+                if lon_val < 49000 and frn_ors in [
+                    "Arbsk>2", "FörlSj>2", "Sj>180", "Sj>180Se", "Sj>2år", "SjFK>år", "Sjuk"
+                ]:
+                    extra_matched_rows.append(row)
+            except:
+                pass
+
+        # Copy headers to each sheet
+        for sheet in sheets.values():
+            for c_idx, header in enumerate(headers, 1):
+                cell = sheet.cell(row=1, column=c_idx, value=header)
+                cell.font = header_font
+                cell.border = border_style
+
+        # Copy matched rows into 4 specific sheets
+        target_sheets = [
+            "Sjuk",
+            "Sjuk >år",
+            "Sjuk Fortsättningsnivå",
+            "Sjuk Fortsättningsnivå>År"
+        ]
+        for sheet_name in target_sheets:
+            sheet = sheets[sheet_name]
+            for r_offset, row in enumerate(matched_rows, start=2):
+                for c_idx, value in enumerate(row, 1):
+                    col_name = headers[c_idx - 1]
+                    cell = sheet.cell(row=r_offset, column=c_idx, value=value)
+                    cell.border = border_style
+
+                    # Apply same logic for each relevant column
+                    if col_name == "Omf":
+                        try:
+                            cell.value = round(float(str(value).replace(',', '.')), 3)
+                        except:
+                            pass
+
+                    elif col_name == "Verklig lön":
+                        try:
+                            number_value = int(str(value).split(',')[0])
+                            cell.alignment = center_alignment
+                            cell.font = purple_font if number_value >= 49000 else bold_font
+                            cell.value = number_value
+                            cell.number_format = '#,##0'
+                        except:
+                            pass
+
+                    elif col_name == "Sem Grp":
+                        if str(value) in ['8', '9']:
+                            cell.fill = orange_fill
+                            
+        for sheet_name in ["Sjuk", "Sjuk >år"]:
+            sheet = sheets[sheet_name]
+            existing_row_count = sheet.max_row
+            for r_offset, row in enumerate(extra_matched_rows, start=existing_row_count + 1):
+                for c_idx, value in enumerate(row, 1):
+                    col_name = headers[c_idx - 1]
+                    cell = sheet.cell(row=r_offset, column=c_idx, value=value)
+                    cell.border = border_style
+
+                    if col_name == "Omf":
+                        try:
+                            cell.value = round(float(str(value).replace(',', '.')), 3)
+                        except:
+                            pass
+
+                    elif col_name == "Verklig lön":
+                        try:
+                            number_value = int(str(value).split(',')[0])
+                            cell.alignment = center_alignment
+                            cell.font = purple_font if number_value >= 49000 else bold_font
+                            cell.value = number_value
+                            cell.number_format = '#,##0'
+                        except:
+                            pass
+
+                    elif col_name == "Sem Grp":
+                        if str(value) in ['8', '9']:
+                            cell.fill = orange_fill
+
+    ws_all.auto_filter.ref = ws_all.dimensions
+    for sheet in sheets.values():
+        sheet.auto_filter.ref = sheet.dimensions
 
     output = io.BytesIO()
     wb.save(output)
