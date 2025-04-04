@@ -24,17 +24,32 @@ uploaded_file = st.file_uploader("Upload your file", type=["csv", "xlsx"])
 
 
 
-is_before_payment = st.checkbox("Is this process before payment?", value=True)
+is_before_payment = st.checkbox("Listan har kommit innan stägning (1:e samt 10:e)", value=True)
+
+month_names = {
+  '01': 'Jan.',
+  '02': 'Fab.',
+  '03': 'Mar.',
+  '04': 'Apr.',
+  '05': 'Maj.',
+  '06': 'Jun.',
+  '07': 'Jul.',
+  '08': 'Aug.',
+  '09': 'Sep.',
+  '10': 'Okt.',
+  '11': 'Nov.',
+  '12': 'Dec.',
+}
 
 month_numbers = [str(i).zfill(2) for i in range(1, 13)]
 
 # Use the selectbox with format_func to display month names alongside the month number
 month = st.selectbox(
-    "Select Month",
+    "Välj månad",
     month_numbers,
-    format_func=lambda x: f"{calendar.month_name[int(x)]} ({x})",  # Display month name and number (e.g., January (01))
+    format_func=lambda x: month_names[x],
 )
-st.info("Don't worry! All calculations are local and data is not shared.")
+st.info("Oroa dig inte! alla beräkningar körs i din maskin och data delas inte någonstans.")
 
 if uploaded_file is not None:
     base_filename = os.path.splitext(uploaded_file.name)[0]
