@@ -130,7 +130,7 @@ def extract_matching_rows(df, headers):
 # Streamlit UI
 st.title("S2_10: Sjuk mer än 365 dagar")
 keep_all_data = st.checkbox("Keep original data as a worksheet", value=False)
-uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+uploaded_file = st.file_uploader("Upload your file", type=["csv", "xlsx"])
 st.info("Don't worry! All calculations are local and data is not shared.")
 
 if uploaded_file is not None:

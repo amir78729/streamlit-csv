@@ -9,7 +9,7 @@ ENCODING = 'utf-8'
 
 st.title("A05_08: List Noll Bearb, A05_08: List Noll Verkställ")
 
-uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+uploaded_file = st.file_uploader("Upload your file", type=["csv", "xlsx"])
 
 st.info("Don't worry! all the calculations are running in your machine and the data is not being shared anywhere.")
 
