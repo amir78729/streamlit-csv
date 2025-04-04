@@ -6,11 +6,10 @@ from openpyxl.styles import Font, Border, Side, PatternFill
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl import Workbook
 from datetime import datetime
-
+import calendar
 
 SEP = ';'
 ENCODING = 'ISO-8859-1'
-
 
 
 # Styling
@@ -21,20 +20,34 @@ yellow_fill = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="s
 
 # Streamlit UI
 st.title("A02_02: Sjuk o frånvaro med omf")
-keep_all_data = st.checkbox("Keep original data as a worksheet", value=False)
-uploaded_file = st.file_uploader("Upload your file", type=["xlsx"])
-month = st.radio("Select Month", options=[str(i).zfill(2) for i in range(1, 13)])  # Months as 01, 02, ... 12
+uploaded_file = st.file_uploader("Upload your file", type=["csv", "xlsx"])
+
+
+
 is_before_payment = st.checkbox("Is this process before payment?", value=True)
 
+month_numbers = [str(i).zfill(2) for i in range(1, 13)]
 
+# Use the selectbox with format_func to display month names alongside the month number
+month = st.selectbox(
+    "Select Month",
+    month_numbers,
+    format_func=lambda x: f"{calendar.month_name[int(x)]} ({x})",  # Display month name and number (e.g., January (01))
+)
 st.info("Don't worry! All calculations are local and data is not shared.")
 
 if uploaded_file is not None:
     base_filename = os.path.splitext(uploaded_file.name)[0]
     excel_result_filename = f"{base_filename}-result.xlsx"
+    # Detect file extension to handle accordingly
+    file_extension = os.path.splitext(uploaded_file.name)[1].lower()
 
     with st.status("Reading File"):
-        df = pd.read_excel(uploaded_file)
+        if file_extension == '.csv':
+            df = pd.read_csv(uploaded_file, sep=SEP, encoding=ENCODING)
+        elif file_extension == '.xlsx':
+            df = pd.read_excel(uploaded_file)
+
         df.columns = df.columns.str.strip()
         st.write(df)
         df['Sem Gfom'] = df['Sem Gfom'].astype(str)

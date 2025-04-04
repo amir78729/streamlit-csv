@@ -137,8 +137,12 @@ if uploaded_file is not None:
     base_filename = os.path.splitext(uploaded_file.name)[0]
     excel_result_filename = f"{base_filename}-result.xlsx"
 
-    with st.status("Reading CSV File"):
-        df = pd.read_csv(uploaded_file, sep=SEP, encoding=ENCODING)
+    file_extension = os.path.splitext(uploaded_file.name)[1].lower()
+    with st.status("Reading File"):
+        if file_extension == '.csv':
+            df = pd.read_csv(uploaded_file, sep=SEP, encoding=ENCODING)
+        elif file_extension == '.xlsx':
+            df = pd.read_excel(uploaded_file)
         st.write(df)
 
     wb = Workbook()
