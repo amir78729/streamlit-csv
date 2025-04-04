@@ -7,11 +7,11 @@ from utils.date import is_holiday
 SEP = ';'
 ENCODING = 'utf-8'
 
-st.title("A05_08: List Noll Bearb, A05_08: List Noll Verkställ")
+st.title("A05_08: List Noll Verkställ")
 
-uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+uploaded_file = st.file_uploader("Upload your file", type=["csv", "xlsx"])
 
-st.info("Don't worry! all the calculations are running in your machine and the data is not being shared anywhere.")
+st.info("Oroa dig inte! alla beräkningar körs i din maskin och data delas inte någonstans.")
 
 col = {
     'Förv/Bolag': 'Förv/Bolag',
