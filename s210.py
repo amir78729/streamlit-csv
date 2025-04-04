@@ -193,7 +193,7 @@ if uploaded_file is not None:
         output.seek(0)
 
     st.download_button(
-        label="Download Result Excel",
+        label="Download Excel",
         data=output,
         file_name=excel_result_filename,
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"

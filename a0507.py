@@ -104,13 +104,13 @@ if uploaded_file is not None:
 
     # Replace the download buttons with:
     st.download_button(
-        "Download Result CSV",
+        "Download CSV",
         df_result.to_csv(sep=SEP, index=False, encoding=ENCODING),
         file_name=csv_result_filename,
     )
 
     st.download_button(
-        label="Download Result Excel",
+        label="Download Excel",
         data=processed_data,
         file_name=excel_result_filename,
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
