@@ -28,7 +28,7 @@ is_before_payment = st.checkbox("Listan har kommit innan stägning (1:e samt 10:
 
 month_names = {
   '01': 'Jan.',
-  '02': 'Fab.',
+  '02': 'Feb.',
   '03': 'Mar.',
   '04': 'Apr.',
   '05': 'Maj.',
